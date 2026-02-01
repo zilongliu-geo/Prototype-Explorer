@@ -232,7 +232,7 @@ elif perspective == "Sampling Temperature":
 
 elif perspective == "Geographic Category":
     st.markdown("""
-    The **Geographic Category** perspective showcases a semantic network of categories. Categories are connected if they share an identical set of LLM-generated exemplars.
+    The **Geographic Category** perspective showcases semantic clusters of categories. Categories are connected if they share an identical set of LLM-generated exemplars.
     """)
 
     selected_model = st.sidebar.selectbox("Select Model", models, help=MODEL_HELP)
@@ -284,7 +284,17 @@ elif perspective == "Geographic Category":
         st.stop()
 
     clusters = list(nx.connected_components(G))
+
+    clusters = [c for c in clusters if len(c) >= 3]
+
+    nodes_to_keep = set().union(*clusters)
+    G = G.subgraph(nodes_to_keep).copy()
+
     st.write(f"The graph contains **{len(clusters)}** cluster(s).")
+
+    if G.number_of_nodes() == 0:
+        st.warning("No clusters found.")
+        st.stop()
 
     edges = []
     for u, v in G.edges():
@@ -306,6 +316,7 @@ elif perspective == "Geographic Category":
     )
 
     agraph(nodes=nodes, edges=edges, config=config)
+
 
 elif perspective == "Large Language Model":
     st.markdown("""
