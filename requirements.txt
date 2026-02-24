@@ -1,0 +1,9 @@
+streamlit
+pandas
+numpy
+networkx
+altair
+requests
+folium
+streamlit-folium
+streamlit-agraph
